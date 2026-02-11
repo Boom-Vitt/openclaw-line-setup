@@ -1,0 +1,83 @@
+{
+  // ========== IDENTITY ==========
+  identity: {
+    name: "OpenClawBot",
+    theme: "helpful assistant",
+    emoji: "🦞",
+  },
+
+  // ========== AGENT ==========
+  agent: {
+    workspace: "~/.openclaw/workspace",
+    model: {
+      primary: "anthropic/claude-sonnet-4-5",
+    },
+  },
+
+  // ========== GATEWAY ==========
+  gateway: {
+    mode: "local",
+    port: 18789,
+    bind: "loopback",
+    // Use Tailscale for HTTPS webhook (required by LINE)
+    tailscale: {
+      mode: "serve",
+    },
+  },
+
+  // ========== LINE CHANNEL ==========
+  channels: {
+    line: {
+      enabled: true,
+
+      // Credentials from LINE Developers Console
+      // Option 1: Use environment variables (LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET)
+      // Option 2: Uncomment and fill in directly (not recommended):
+      // channelAccessToken: "YOUR_CHANNEL_ACCESS_TOKEN",
+      // channelSecret: "YOUR_CHANNEL_SECRET",
+
+      // Option 3: Load from files:
+      // tokenFile: "~/.openclaw/line-token.txt",
+      // secretFile: "~/.openclaw/line-secret.txt",
+
+      // DM Policy: pairing | allowlist | open | disabled
+      dmPolicy: "pairing",
+
+      // For allowlist policy, add LINE user IDs here (U + 32 hex chars)
+      allowFrom: [],
+
+      // Group chat policy
+      groupPolicy: "allowlist",
+      groupAllowFrom: [],
+
+      // Media download limit (MB)
+      mediaMaxMb: 10,
+    },
+  },
+
+  // ========== TOOLS ==========
+  tools: {
+    allow: ["read", "write", "edit", "exec", "web_search", "web_fetch"],
+    elevated: {
+      enabled: true,
+      allowFrom: {
+        line: [], // Add LINE user IDs that can run elevated commands
+      },
+    },
+  },
+
+  // ========== SESSION ==========
+  session: {
+    scope: "per-sender",
+    reset: {
+      mode: "daily",
+      atHour: 4,
+    },
+  },
+
+  // ========== LOGGING ==========
+  logging: {
+    level: "info",
+    consoleLevel: "info",
+  },
+}

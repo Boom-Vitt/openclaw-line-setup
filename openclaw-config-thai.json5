@@ -1,0 +1,154 @@
+{
+  // ========================================
+  // ไฟล์ตั้งค่า OpenClaw สำหรับ LINE (ภาษาไทย)
+  // บันทึกที่: ~/.openclaw/openclaw.json
+  // ========================================
+
+  // ตัวตนของบอท
+  identity: {
+    name: "OpenClawBot",           // ชื่อบอท
+    theme: "ผู้ช่วยที่เป็นประโยชน์",  // บุคลิก
+    emoji: "🦞",                   // อิโมจิ
+  },
+
+  // การตั้งค่า Agent
+  agent: {
+    workspace: "~/.openclaw/workspace",
+    
+    // ⚠️ สำคัญ: เลือกโมเดล AI ที่คุณต้องการ
+    // ต้องใช้ API Key ของคุณเอง (ดูคำอธิบายด้านล่าง)
+    model: {
+      primary: "anthropic/claude-sonnet-4-5",  // หรือโมเดลอื่น
+    },
+  },
+
+  // การตั้งค่า Gateway
+  gateway: {
+    mode: "local",
+    port: 18789,
+    bind: "loopback",
+    
+    // สำหรับ LINE ต้องใช้ HTTPS
+    tailscale: {
+      mode: "serve",  // หรือ "funnel" สำหรับ HTTPS สาธารณะ
+    },
+  },
+
+  // การตั้งค่าช่องทาง LINE
+  channels: {
+    line: {
+      enabled: true,
+
+      // 🔴 สำคัญ: ต้องตั้งค่า LINE Credentials
+      // วิธีที่ 1: ใช้ Environment Variables (แนะนำ)
+      // ตั้งค่า: LINE_CHANNEL_ACCESS_TOKEN และ LINE_CHANNEL_SECRET
+      
+      // วิธีที่ 2: ใส่ตรงนี้ (ไม่แนะนำสำหรับ production)
+      // channelAccessToken: "YOUR_CHANNEL_ACCESS_TOKEN",
+      // channelSecret: "YOUR_CHANNEL_SECRET",
+
+      // นโยบายข้อความส่วนตัว
+      // pairing = ต้องอนุมัติผู้ใช้ก่อน (แนะนำ)
+      // allowlist = เฉพาะรายการที่อนุญาต
+      // open = ใครก็ได้ (ไม่แนะนำ)
+      dmPolicy: "pairing",
+
+      // ถ้าใช้ allowlist ให้ใส่ LINE User IDs ที่นี่
+      allowFrom: [],
+
+      // นโยบายแชทกลุ่ม
+      groupPolicy: "allowlist",
+      groupAllowFrom: [],
+
+      // ขีดจำกัดไฟล์มีเดีย (MB)
+      mediaMaxMb: 10,
+    },
+  },
+
+  // การตั้งค่าเครื่องมือ
+  tools: {
+    allow: ["read", "write", "edit", "exec", "web_search", "web_fetch"],
+    elevated: {
+      enabled: true,
+      allowFrom: {
+        line: [],  // LINE IDs ที่ใช้คำสั่งอันตรายได้
+      },
+    },
+  },
+
+  // การตั้งค่าเซสชัน
+  session: {
+    scope: "per-sender",
+    reset: {
+      mode: "daily",
+      atHour: 4,
+    },
+  },
+
+  // การบันทึกล็อก
+  logging: {
+    level: "info",
+    consoleLevel: "info",
+  },
+}
+
+/*
+============================================
+⚠️ คำแนะนำสำคัญเกี่ยวกับ API Keys
+============================================
+
+1. LINE Plugin ติดตั้งด้วย:
+   openclaw plugins install @openclaw/line
+
+2. AI Model API - ต้องใช้ของคุณเอง:
+   
+   ตัวเลือกที่รองรับ:
+   
+   a) Anthropic (Claude)
+      - สมัคร: https://console.anthropic.com
+      - export ANTHROPIC_API_KEY="sk-ant-..."
+      - โมเดล: "anthropic/claude-sonnet-4-5"
+   
+   b) OpenAI (GPT)
+      - สมัคร: https://platform.openai.com
+      - export OPENAI_API_KEY="sk-..."
+      - โมเดล: "openai/gpt-5.2"
+   
+   c) OpenRouter (หลายโมเดล)
+      - สมัคร: https://openrouter.ai
+      - export OPENROUTER_API_KEY="sk-or-..."
+      - โมเดล: "openrouter/anthropic/claude-sonnet-4-5"
+   
+   d) Google (Gemini)
+      - สมัคร: https://ai.google.dev
+      - export GEMINI_API_KEY="..."
+      - โมเดล: "google/gemini-2.0-flash"
+   
+   e) อื่นๆ: Groq, DeepSeek, Together, ฯลฯ
+
+3. OpenClaw ไม่มี API Key มาให้
+   ผู้ใช้ต้องสมัครและใช้ API Key ของตัวเองเท่านั้น
+
+============================================
+ขั้นตอนการตั้งค่า LINE
+============================================
+
+1. ไปที่ https://developers.line.biz/console/
+2. สร้าง Provider → สร้าง Messaging API channel
+3. คัดลอก Channel access token และ Channel secret
+4. เปิด "Use webhook" และตั้ง URL: https://your-host/line/webhook
+5. ตั้งค่า Environment Variables:
+   export LINE_CHANNEL_ACCESS_TOKEN="..."
+   export LINE_CHANNEL_SECRET="..."
+   export ANTHROPIC_API_KEY="..."  (หรือผู้ให้บริการที่เลือก)
+6. รัน: openclaw gateway start
+
+============================================
+การจับคู่ผู้ใช้
+============================================
+
+เมื่อมีคนส่งข้อความมา (dmPolicy: "pairing"):
+1. ดูรายการรอ: openclaw pairing list line
+2. อนุมัติ: openclaw pairing approve line <CODE>
+
+*/

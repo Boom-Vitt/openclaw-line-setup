@@ -1,0 +1,54 @@
+{
+  "//": "OpenClaw Config สำหรับ LINE - แก้ไขข้อมูลตัวเองแล้วบันทึกที่ ~/.openclaw/openclaw.json",
+  
+  "identity": {
+    "name": "MyLineBot",
+    "theme": "ผู้ช่วยอัจฉริยะ",
+    "emoji": "🤖"
+  },
+
+  "agent": {
+    "workspace": "~/.openclaw/workspace",
+    "model": {
+      "primary": "openrouter/google/gemini-2.0-flash"
+    }
+  },
+
+  "env": {
+    "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}"
+  },
+
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "bind": "loopback",
+    "controlUi": {
+      "enabled": true,
+      "basePath": "/openclaw"
+    }
+  },
+
+  "channels": {
+    "line": {
+      "enabled": true,
+      "tokenFile": "~/.openclaw/line-token.txt",
+      "secretFile": "~/.openclaw/line-secret.txt",
+      "dmPolicy": "pairing",
+      "mediaMaxMb": 10
+    }
+  },
+
+  "session": {
+    "scope": "per-sender",
+    "reset": {
+      "mode": "daily",
+      "atHour": 4
+    }
+  },
+
+  "logging": {
+    "level": "info",
+    "consoleLevel": "info",
+    "file": "~/.openclaw/openclaw.log"
+  }
+}
